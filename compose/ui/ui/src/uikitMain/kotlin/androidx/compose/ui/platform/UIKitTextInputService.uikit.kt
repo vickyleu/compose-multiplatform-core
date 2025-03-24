@@ -152,7 +152,9 @@ internal class UIKitTextInputService(
         onImeActionPerformed: (ImeAction) -> Unit
     ) {
         currentInput = CurrentInput(value, onEditCommand)
-        _tempCurrentInputSession = editProcessor
+        _tempCurrentInputSession = editProcessor?.apply {
+            reset(value, null)
+        }
         currentImeOptions = imeOptions
         currentImeActionHandler = onImeActionPerformed
 
@@ -295,7 +297,7 @@ internal class UIKitTextInputService(
         }
 
     private fun sendEditCommand(vararg commands: EditCommand) {
-        _tempCurrentInputSession?.apply(commands.toList())
+//        _tempCurrentInputSession?.apply(commands.toList()) // should be obsolete
 
         editCommandsBatch.addAll(commands)
         flushEditCommandsIfNeeded()
@@ -307,6 +309,9 @@ internal class UIKitTextInputService(
             editCommandsBatch.clear()
 
             currentInput?.onEditCommand?.invoke(commandList)
+
+            val newValue = _tempCurrentInputSession?.toTextFieldValue() ?: return
+            updateState(oldValue = null, newValue = newValue)
         }
     }
 
@@ -477,7 +482,7 @@ internal class UIKitTextInputService(
          * Remove the character just before the cursor from your class’s backing store and redisplay the text.
          * https://developer.apple.com/documentation/uikit/uikeyinput/1614572-deletebackward
          */
-        override fun deleteBackward() {
+        override fun deleteBackward() {//
             // Before this function calls, iOS changes selection in setSelectedTextRange.
             // All needed characters should be already selected, and we can just remove them.
             sendEditCommand(

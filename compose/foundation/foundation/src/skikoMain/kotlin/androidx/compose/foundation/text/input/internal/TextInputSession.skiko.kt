@@ -62,7 +62,9 @@ internal actual suspend fun PlatformTextInputSession.platformSpecificTextInputSe
 
         state.replaceAll(newValue.text)
         state.editUntransformedTextAsUser {
-            val untransformedSelection = state.mapFromTransformed(newValue.selection)
+//            val untransformedSelection = state.mapFromTransformed(newValue.selection)
+            val untransformedSelection = newValue.selection
+//            println("onEditCommand: state.mapFromTransformed(newValue.selection): $untransformedSelection, selection: ${newValue.selection}\n\n")
             setSelectionCoerced(untransformedSelection.start, untransformedSelection.end)
 
             val composition = newValue.composition
@@ -78,7 +80,7 @@ internal actual suspend fun PlatformTextInputSession.platformSpecificTextInputSe
     coroutineScope {
         launch {
             state.collectImeNotifications { _, newValue, _ ->
-                updateTextFieldValue(newValue.toTextFieldValue())
+//                updateTextFieldValue(newValue.toTextFieldValue())
             }
         }
 
