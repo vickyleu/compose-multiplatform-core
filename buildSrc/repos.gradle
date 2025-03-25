@@ -57,6 +57,12 @@ def addMavenRepositories(RepositoryHandler handler) {
             artifact()
         }
     }
+    handler.maven{
+        setUrl(uri("https://raw.githubusercontent.com/vickyleu/kotlin_linuxarm32hfp_maven/main"))
+        content {
+            includeGroupByRegex("com.vickyleu.*")
+        }
+    }
     def isJBFork = true
     if (isJBFork) {
         handler.mavenCentral()

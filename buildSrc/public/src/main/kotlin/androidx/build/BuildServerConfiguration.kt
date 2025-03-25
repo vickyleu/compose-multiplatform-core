@@ -124,6 +124,7 @@ fun isSnapshotBuild() = System.getenv("SNAPSHOT") != null
  */
 fun Project.getRepositoryDirectory(): File {
     val actualRootProject = if (project.isRoot) project else project.rootProject
+//    val directory = File(actualRootProject.buildDir, "repository")
     val directory = if (isSnapshotBuild()) {
         // For snapshot builds we put artifacts directly where downstream users can find them.
         File(actualRootProject.getDistributionDirectory(), "repository")

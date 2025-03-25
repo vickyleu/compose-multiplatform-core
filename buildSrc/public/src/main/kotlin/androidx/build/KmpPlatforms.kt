@@ -71,6 +71,7 @@ enum class PlatformIdentifier(
     MAC_OSX_64("macosx64", PlatformGroup.MAC),
     LINUX_64("linuxx64", PlatformGroup.LINUX),
     LINUX_ARM_64("linuxarm64", PlatformGroup.LINUX),
+    LINUX_ARM_32HFP("linuxarm32hfp", PlatformGroup.LINUX),
     IOS_SIMULATOR_ARM_64("iossimulatorarm64", PlatformGroup.MAC),
     IOS_X_64("iosx64", PlatformGroup.MAC),
     IOS_ARM_64("iosarm64", PlatformGroup.MAC),

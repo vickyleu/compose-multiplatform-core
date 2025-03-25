@@ -23,28 +23,28 @@ import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.TestedExtension
 import com.android.build.gradle.internal.lint.AndroidLintAnalysisTask
-import com.android.build.gradle.internal.lint.AndroidLintTask
 import com.android.build.gradle.internal.lint.LintModelWriterTask
 import com.android.build.gradle.internal.lint.VariantInputs
 import java.io.File
 import kotlin.reflect.KFunction
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.plugins.ExtraPropertiesExtension
+import org.gradle.api.internal.provider.ValueState
 import org.gradle.api.tasks.ClasspathNormalizer
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.withType
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.tooling.core.withClosure
 
@@ -82,12 +82,14 @@ class AndroidXComposeImplPlugin : Plugin<Project> {
 
                     project.configureAndroidCommonOptions(library)
                 }
+
                 is AppPlugin -> {
                     val app = project.extensions.findByType(AppExtension::class.java)
                         ?: throw Exception("Failed to find Android extension")
 
                     project.configureAndroidCommonOptions(app)
                 }
+
                 is KotlinBasePluginWrapper -> {
                     configureComposeCompilerPlugin(project, extension)
 
@@ -129,22 +131,24 @@ class AndroidXComposeImplPlugin : Plugin<Project> {
             }
 
             project.afterEvaluate { projectAfterEvaluate ->
-                projectAfterEvaluate.tasks.withType(KotlinCompilationTask::class.java).configureEach { compile ->
-                    // Needed to enable `expect` and `actual` keywords
-                    compile.compilerOptions.freeCompilerArgs.add("-Xmulti-platform")
+                projectAfterEvaluate.tasks.withType(KotlinCompilationTask::class.java)
+                    .configureEach { compile ->
+                        // Needed to enable `expect` and `actual` keywords
+                        compile.compilerOptions.freeCompilerArgs.add("-Xmulti-platform")
 
-                    // Suppress a warning that 'expect'/'actual' classes are in Beta.
-                    compile.compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
+                        // Suppress a warning that 'expect'/'actual' classes are in Beta.
+                        compile.compilerOptions.freeCompilerArgs.add("-Xexpect-actual-classes")
+                    }
+            }
+
+
+            project.tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>()
+                .configureEach {
+                    it.compilerOptions.freeCompilerArgs.addAll(
+                        "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                        "-opt-in=kotlin.experimental.ExperimentalNativeApi"
+                    )
                 }
-            }
-
-
-            project.tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>().configureEach {
-                it.compilerOptions.freeCompilerArgs.addAll(
-                    "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
-                    "-opt-in=kotlin.experimental.ExperimentalNativeApi"
-                )
-            }
         }
 
         private fun Project.androidxExtension(): AndroidXExtension? {
@@ -486,11 +490,21 @@ private fun Project.configureLintForMultiplatformLibrary(
 private fun ConfigurableFileCollection.withChangesAllowed(
     block: ConfigurableFileCollection.() -> Unit
 ) {
-    val disallowChanges = this::class.java.getDeclaredField("disallowChanges")
-    disallowChanges.isAccessible = true
-    disallowChanges.set(this, false)
-    block()
-    disallowChanges.set(this, true)
+    // ===>> DefaultConfigurableFileCollection.valueState.disallowChanges
+    val valueState = this::class.java.getDeclaredField("valueState")
+    valueState.isAccessible = true
+    val valueStateImpl = valueState.get(this) as ValueState<*>
+    @Suppress("UNCHECKED_CAST")
+    val disallowChanges =
+        valueStateImpl::class.memberProperties.find { it.name == "disallowChanges" } as? KMutableProperty1<Any, Boolean>
+    disallowChanges?.apply {
+        isAccessible = true
+        // 修改为false
+        this.set(valueStateImpl, false)
+        block()
+        // 修改为true
+        this.set(valueStateImpl, true)
+    }
 }
 
 /**

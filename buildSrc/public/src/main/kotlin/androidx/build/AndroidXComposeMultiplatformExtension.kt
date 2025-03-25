@@ -65,6 +65,7 @@ abstract class AndroidXComposeMultiplatformExtension {
      * for all linuxArm64 native targets.
      */
     abstract fun linuxArm64(): Unit
+    abstract fun linuxArm32Hfp(): Unit
 
     /**
      * Configures native compilation tasks with flags to link required frameworks

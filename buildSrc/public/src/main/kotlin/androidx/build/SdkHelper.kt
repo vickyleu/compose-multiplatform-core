@@ -82,7 +82,8 @@ fun Project.getSdkPath(): File {
         getSdkPathFromEnvironmentVariable()
     } else if (isJBFork) {
         val platform = if (os == OperatingSystem.MAC) "darwin" else "linux"
-        val folder = rootProject.projectDir.resolve("jbdeps/android-sdk/$platform")
+//        val folder = rootProject.projectDir.resolve("jbdeps/android-sdk/$platform")
+        val folder = File("/Volumes/Extra/Android/sdk")
         check(folder.exists()) {
             "Android SDK folder $folder doesn't exist. " +
                 "Call ./jbdeps/android-sdk/downloadAndroidSdk before opening the project"
@@ -97,7 +98,7 @@ fun Project.getSdkPath(): File {
 }
 
 /**
- * @return [File] representing the path stored in [envValue] if it exists, `null` otherwise.
+ * @return [File] representing the path stored in [envVar] if it exists, `null` otherwise.
  */
 private fun getPathFromEnvironmentVariableOrNull(envVar: String): File? {
     val envValue = System.getenv(envVar)

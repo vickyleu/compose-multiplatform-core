@@ -238,6 +238,10 @@ open class AndroidXComposeMultiplatformExtensionImpl @Inject constructor(
     override fun linuxArm64(): Unit = multiplatformExtension.run {
         linuxArm64()
     }
+    override fun linuxArm32Hfp(): Unit = multiplatformExtension.run {
+        @Suppress("DEPRECATION")
+        linuxArm32Hfp()
+    }
 
     private fun getOrCreateJvmMain(): KotlinSourceSet =
         getOrCreateSourceSet("jvmMain", "commonMain")

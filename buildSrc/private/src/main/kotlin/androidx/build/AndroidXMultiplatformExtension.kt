@@ -264,6 +264,7 @@ open class AndroidXMultiplatformExtension(val project: Project) {
         return listOfNotNull(
             linuxX64(block),
             linuxArm64(block),
+//         TODO   linuxArm32Hfp(block),
         )
     }
 
@@ -286,6 +287,18 @@ open class AndroidXMultiplatformExtension(val project: Project) {
         requestedPlatforms.add(PlatformIdentifier.LINUX_ARM_64)
         return if (project.enableLinux()) {
             kotlinExtension.linuxArm64().also {
+                block?.execute(it)
+            }
+        } else { null }
+    }
+    @JvmOverloads
+    fun linuxArm32Hfp(
+        block: Action<KotlinNativeTarget>? = null
+    ): KotlinNativeTarget? {
+        requestedPlatforms.add(PlatformIdentifier.LINUX_ARM_32HFP)
+        return if (project.enableLinux()) {
+            @Suppress("DEPRECATION")
+            kotlinExtension.linuxArm32Hfp().also {
                 block?.execute(it)
             }
         } else { null }

@@ -46,6 +46,7 @@ androidXComposeMultiplatform {
 
     linuxX64()
     linuxArm64()
+    //    linuxArm32Hfp()
 }
 
 kotlin {

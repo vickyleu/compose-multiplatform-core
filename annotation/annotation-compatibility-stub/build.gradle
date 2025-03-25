@@ -38,6 +38,7 @@ androidXComposeMultiplatform {
 
     linuxX64()
     linuxArm64()
+    linuxArm32Hfp()
 }
 
 kotlin {
@@ -50,6 +51,7 @@ kotlin {
     watchosArm32()
     watchosX64()
     watchosSimulatorArm64()
+    watchosDeviceArm64()
     tvosArm64()
     tvosX64()
     tvosSimulatorArm64()
@@ -58,7 +60,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api("androidx.annotation:annotation:1.9.1")
+                api(project(":annotation:annotation-base"))
+//                api("androidx.annotation:annotation:1.9.1")
             }
         }
     }
@@ -67,6 +70,7 @@ kotlin {
 androidx {
     name = "Annotation"
     type = LibraryType.PUBLISHED_LIBRARY
+    mavenVersion = LibraryVersions.ANNOTATION
     inceptionYear = "2013"
     description = "Provides source annotations for tooling and readability."
 }

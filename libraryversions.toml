@@ -310,8 +310,10 @@ WINDOW_SIDECAR = { group = "androidx.window.sidecar", atomicGroupVersion = "vers
 WORK = { group = "androidx.work", atomicGroupVersion = "versions.WORK" }
 XR = { group = "androidx.xr", atomicGroupVersion = "versions.XR" }
 
+# vickyleu overrides TODO: 替换打包包名和版本号
+ANNOTATION_vickyleu = { group = "com.vickyleu.annotation", atomicGroupVersion = "versions.COMPOSE", overrideInclude = [ ":annotation:annotation" ] }
 # JetBrains overrides
-ANNOTATION_JETBRAINS = { group = "org.jetbrains.compose.annotation-internal", atomicGroupVersion = "versions.COMPOSE", overrideInclude = [ ":annotation:annotation" ] }
+#ANNOTATION_JETBRAINS = { group = "org.jetbrains.compose.annotation-internal", atomicGroupVersion = "versions.COMPOSE", overrideInclude = [ ":annotation:annotation" ] }
 COLLECTION_JETBRAINS = { group = "org.jetbrains.compose.collection-internal", atomicGroupVersion = "versions.COMPOSE", overrideInclude = [ ":collection:collection" ] }
 COMPOSE_COMPILER = { group = "org.jetbrains.compose.compiler", atomicGroupVersion = "versions.COMPOSE" }
 COMPOSE_DESKTOP = { group = "org.jetbrains.compose.desktop", atomicGroupVersion = "versions.COMPOSE" }

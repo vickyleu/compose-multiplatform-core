@@ -45,4 +45,27 @@ allprojects {
     this.tasks.configureEach {
         if (it.name == "kotlinStoreYarnLock") it.enabled = false
     }
+    it.configurations {
+        configureEach {
+            resolutionStrategy {
+                eachDependency {
+                    if (requested.group == "org.jetbrains.kotlinx" && requested.module.name.startsWith("kotlinx-coroutines")) {
+                        useTarget("com.vickyleu.kotlinx.coroutines:${requested.module.name}:1.10.1-SNAPSHOT")
+                    } else if (requested.group == "org.jetbrains.kotlinx" && requested.module.name.startsWith("kotlinx-html")) {
+                        useTarget("com.vickyleu.kotlinx:${requested.module.name}:0.12.0")
+                    } else if (requested.group == "org.jetbrains.kotlinx" && (requested.module.name.startsWith("kotlinx-rpc") &&
+                            requested.module.name != "kotlinx-rpc-bom" &&
+                            requested.module.name.startsWith("kotlinx-rpc-compiler").not())) {
+                        useTarget("com.vickyleu.kotlinx:${requested.module.name}:0.5.1")
+                    } else if (requested.group == "io.ktor" && requested.module.name.startsWith("ktor")) {
+                        useTarget("com.vickyleu.ktor:${requested.module.name}:3.1.2-SNAPSHOT")
+                    } else if (requested.group == "pro.streem.pbandk") {
+                        useTarget("com.vickyleu.pbandk:${requested.module.name}:0.16.1-SNAPSHOT")
+                    } else if (requested.group == "io.github.oshai") {
+                        useTarget("com.vickyleu.oshai:${requested.module.name}:7.0.6")
+                    }
+                }
+            }
+        }
+    }
 }

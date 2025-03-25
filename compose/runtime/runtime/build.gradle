@@ -72,6 +72,7 @@ if(AndroidXComposePlugin.isMultiplatformEnabled(project)) {
 
         linuxX64()
         linuxArm64()
+        //    linuxArm32Hfp()
     }
 
     kotlin {
@@ -88,6 +89,7 @@ if(AndroidXComposePlugin.isMultiplatformEnabled(project)) {
         tvosSimulatorArm64()
         mingwX64()
         linuxArm64()
+        //    linuxArm32Hfp()
 
         targets.js {
             nodejs {

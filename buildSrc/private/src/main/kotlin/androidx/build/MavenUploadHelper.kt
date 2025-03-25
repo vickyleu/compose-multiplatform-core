@@ -147,7 +147,9 @@ private fun Project.configureComponentPublishing(
     configure<PublishingExtension> {
         repositories {
             it.maven { repo ->
-                repo.setUrl(getRepositoryDirectory())
+                repo.setUrl("file://${getRepositoryDirectory().absolutePath.apply {
+                    println("Repository directory: $this")
+                }}")
             }
         }
         publications {

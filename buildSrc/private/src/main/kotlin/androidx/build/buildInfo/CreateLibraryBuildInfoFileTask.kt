@@ -329,14 +329,14 @@ private fun Project.createBuildInfoTask(
                 artifactId = artifactId,
                 taskSuffix = computeTaskSuffix(artifactId),
                 dependencies = project.provider {
-                    pub.component?.let { component ->
+                    pub.component.get().let { component ->
                         val usageDependencies =
                             component.usages.orEmpty().flatMap { it.dependencies }
                         usageDependencies + dependenciesOnKmpVariants(component)
                     }.orEmpty()
                 },
                 dependencyConstraints = project.provider {
-                    pub.component?.let { component ->
+                    pub.component.get().let { component ->
                             component.usages.orEmpty().flatMap { it.dependencyConstraints }
                     }.orEmpty()
             }),
